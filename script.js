@@ -12,7 +12,9 @@ var newGameButton = document.querySelector('#new-game-btn');
 var selectedNumbers = [];
 
 // Define sorted numbers
-const sortedNumbers = numbers.slice(0, 25).sort((a, b) => a - b);
+var shuffledNumbers = shuffle(numbers.slice(0, 25));
+
+var hasQuine = false;
 
 // Add event listeners
 cells.forEach(function(cell) {
@@ -25,6 +27,9 @@ cells.forEach(function(cell) {
 			selectedNumbers.push(number);
 			cell.classList.add('selected');
 			checkForBingo();
+			if (hasQuine == false) {
+				checkForQuine();
+			}
 		}
 	});
 });
@@ -54,7 +59,7 @@ function shuffle(array) {
 
 // Update card function
 function updateCard() {
-    const shuffledNumbers = shuffle(numbers.slice(0, 25));
+	shuffledNumbers = shuffle(numbers.slice(0, 25));
     const sortedNumbers = shuffledNumbers.sort((a, b) => a - b);
     for (var i = 0; i < cells.length; i++) {
         cells[i].textContent = sortedNumbers[i];
@@ -105,6 +110,7 @@ newGameButton.addEventListener('click', function() {
 	pickedNumbers.length = 0;
 	pickedNumberElem.textContent = '';
 	pickedNumbersElem.textContent = '';
+	hasQuine = false;
 	bingoCells.forEach(cell => {
 		cell.classList.remove("picked");
 	});
@@ -124,4 +130,38 @@ function checkForBingo() {
 	  selectedNumbers = [];
 	}
   }
+
+  function checkForQuine() {
+    var rows = [
+        [0, 1, 2, 3, 4],
+        [5, 6, 7, 8, 9],
+        [10, 11, 12, 13, 14],
+        [15, 16, 17, 18, 19],
+        [20, 21, 22, 23, 24],
+        [0, 5, 10, 15, 20],
+        [1, 6, 11, 16, 21],
+        [2, 7, 12, 17, 22],
+        [3, 8, 13, 18, 23],
+        [4, 9, 14, 19, 24],
+        [0, 6, 12, 18, 24],
+        [4, 8, 12, 16, 20]
+    ];
+
+    // Check for completed rows
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var selectedCount = 0;
+        for (var j = 0; j < row.length; j++) {
+            if (selectedNumbers.includes(shuffledNumbers[row[j]])) {
+                selectedCount++;
+            }
+        }
+        if (selectedCount == 5) {
+			hasQuine = true;
+            alert("Quine!");
+            return true;
+        }
+    }
+    return false;
+}
   
