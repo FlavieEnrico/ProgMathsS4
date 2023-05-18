@@ -7,7 +7,8 @@ const bingoCells = document.querySelectorAll(".bingo-cell");
 const pickedNumberElem = document.getElementById("picked-number");
 const pickedNumbersElem = document.getElementById("picked-numbers");
 const stopButtonElem = document.getElementById("stop-btn");
-
+const nbForQuine = document.getElementById("count-quine");
+const nbForBingo = document.getElementById("count-bingo");
 
 // Define variables
 var cells = document.querySelectorAll('.bingo-cell');
@@ -16,6 +17,7 @@ var automaticGameButton = document.querySelector('#automatic-game');
 
 
 var selectedNumbers = [];
+var playing;
 
 // Define sorted numbers
 var shuffledNumbers = shuffle(numbers.slice(0, 25));
@@ -41,6 +43,7 @@ function initialiseGame(){
 		cell.classList.remove("picked");
 	});
 };
+
 
 // Add event listeners
 cells.forEach(function(cell) {
@@ -93,19 +96,32 @@ automaticGameButton.addEventListener('click', function(){
 
 newGameButton.addEventListener('click', function(){
     initialiseGame();
-
-    // while(!hasBingo && !stop){
-    //     let pickingTime = Laplace(1000, 4);
-    //     console.log(Math.abs(Laplace(1000,4)));
-        
-    //     setTimeout(function(){
-    //         displayPickedNumber();
-    //     }, pickingTime);
-        
-    // }
+    playing();  
 });
 
-stopButtonElem.addEventListener('click', stop = true);
+function playing(){
+
+    let pickingTime = Laplace(5000, 1000);
+    pickingTime = Math.max(2000, Math.min(8000, pickingTime));
+    //     console.log(Math.abs(Laplace(1000,4)));
+
+   
+
+    if(hasBingo || stop || numbers.length === 0){
+        displayPickedNumbers();
+    }
+    else{
+        setTimeout(function(){
+            console.log(pickingTime);
+            displayPickedNumber();
+            playing();
+        }, pickingTime);
+        
+    }
+
+}
+
+stopButtonElem.addEventListener('click', function(){stop = true});
 
 
 
@@ -154,8 +170,8 @@ function displayPickedNumber() {
       }
     });
 
-    let time = normalDistribution(1000, 200);
-    console.log(time);
+    let time = normalDistribution(1000, 500);
+    //console.log(time);
     pickedNumberElem.textContent = lastPickedNumber;
     setTimeout(function(){
         pickedNumberElem.textContent = '';
@@ -164,8 +180,6 @@ function displayPickedNumber() {
 }
 
 function displayPickedNumbers() {
-
-    
     pickedNumbersElem.textContent = pickedNumbers.join(', ');
 }
   
@@ -190,6 +204,7 @@ function checkForBingo() {
 	  // Clear the selected numbers array
 	  selectedNumbers = [];
       countNumberBingo.push(pickedNumbers.length);
+      nbForBingo.textContent = pickedNumbers.length;
 	}
   }
 
@@ -221,6 +236,7 @@ function checkForBingo() {
         if (selectedCount == 5) {
 			hasQuine = true;
             alert("Quine!");
+            nbForQuine.textContent = pickedNumbers.length;
             return true;
         }
     }

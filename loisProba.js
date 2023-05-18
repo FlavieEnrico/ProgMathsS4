@@ -99,10 +99,11 @@ function exponentielle(lambda){
 }
 
 
-function Laplace(mu, b){
-    
-    const u = Math.random() - 0.5;
-
-    return mu * (b* Math.sign(u) *  Math.log(1 - 2 * Math.abs(u)));
-}
-
+function Laplace(mu, b) {
+    var u = Math.random() - 0.5;
+    if (u < 0) {
+      return mu + b * Math.log(1 - 2 * u);
+    } else {
+      return mu - b * Math.log(1 - 2 * u);
+    }
+  }
