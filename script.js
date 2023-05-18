@@ -6,6 +6,7 @@ const countNumberQuine = [];
 const bingoCells = document.querySelectorAll(".bingo-cell");
 const pickedNumberElem = document.getElementById("picked-number");
 const pickedNumbersElem = document.getElementById("picked-numbers");
+const stopButtonElem = document.getElementById("stop-btn");
 
 
 // Define variables
@@ -21,6 +22,7 @@ var shuffledNumbers = shuffle(numbers.slice(0, 25));
 
 var hasQuine = false;
 var hasBingo = false;
+var stop = false;
 
 function initialiseGame(){
     selectedNumbers = [];
@@ -34,6 +36,7 @@ function initialiseGame(){
 	pickedNumbersElem.textContent = '';
 	hasQuine = false;
     hasBingo = false;
+    stop = false;
 	bingoCells.forEach(cell => {
 		cell.classList.remove("picked");
 	});
@@ -90,7 +93,21 @@ automaticGameButton.addEventListener('click', function(){
 
 newGameButton.addEventListener('click', function(){
     initialiseGame();
+
+    // while(!hasBingo && !stop){
+    //     let pickingTime = Laplace(1000, 4);
+    //     console.log(Math.abs(Laplace(1000,4)));
+        
+    //     setTimeout(function(){
+    //         displayPickedNumber();
+    //     }, pickingTime);
+        
+    // }
 });
+
+stopButtonElem.addEventListener('click', stop = true);
+
+
 
 // Shuffle function
 function shuffle(array) {
@@ -136,17 +153,27 @@ function displayPickedNumber() {
         cell.classList.add("picked");
       }
     });
+
+    let time = normalDistribution(1000, 200);
+    console.log(time);
     pickedNumberElem.textContent = lastPickedNumber;
+    setTimeout(function(){
+        pickedNumberElem.textContent = '';
+    }, time);
+    
 }
 
 function displayPickedNumbers() {
+
+    
     pickedNumbersElem.textContent = pickedNumbers.join(', ');
 }
   
 
-const pickNumberBtn = document.getElementById("pick-number-btn");
-pickNumberBtn.addEventListener("click", displayPickedNumber);
-pickNumberBtn.addEventListener("click", displayPickedNumbers);
+// const pickNumberBtn = document.getElementById("pick-number-btn");
+// pickNumberBtn.addEventListener("click", displayPickedNumber);
+// pickNumberBtn.addEventListener("click", displayPickedNumbers);
+
 
 
 function checkForBingo() {
@@ -195,7 +222,6 @@ function checkForBingo() {
 			hasQuine = true;
             alert("Quine!");
             return true;
-            countNumberQuine.push(pickedNumbers.length);
         }
     }
     return false;

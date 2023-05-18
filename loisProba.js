@@ -12,8 +12,8 @@ function binomial(n, p){
 }
 
 function normalDistribution(moyenne, equartType){
-    let u;
-    let v;
+    let u = 0;
+    let v = 0;
 
     while (u==0){
         u = Math.random();
@@ -22,9 +22,9 @@ function normalDistribution(moyenne, equartType){
         v = Math.random();
     }
 
-    let normalVar = Math.sqrt(-2. * Math.log(u) * Math.cos(2. * Math.PI * v));
+    let normalVar = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 
-    return normalVar * moyenne * equartType;
+    return normalVar* Math.sqrt(equartType) + moyenne ;
 }
 
 function factorial(n) {
