@@ -1,14 +1,16 @@
 // Define bingo numbers
 const numbers = Array.from({length: 100}, (_, i) => i + 1);
 const pickedNumbers = [];
-const countNumberBingo = [];
-const countNumberQuine = [];
+var orderedNumbers = [];
+
 const bingoCells = document.querySelectorAll(".bingo-cell");
 const pickedNumberElem = document.getElementById("picked-number");
 const pickedNumbersElem = document.getElementById("picked-numbers");
 const stopButtonElem = document.getElementById("stop-btn");
-const nbForQuine = document.getElementById("count-quine");
-const nbForBingo = document.getElementById("count-bingo");
+const nbForQuineElem = document.getElementById("count-quine");
+const nbForBingoElem = document.getElementById("count-bingo");
+const gridModeElem = document.getElementById("grid-mode");
+const pickModeElem = document.getElementById("pick-mode");
 
 // Define variables
 var cells = document.querySelectorAll('.bingo-cell');
@@ -16,8 +18,11 @@ var newGameButton = document.querySelector('#new-game-btn');
 var automaticGameButton = document.querySelector('#automatic-game');
 
 
+
 var selectedNumbers = [];
 var playing;
+var nbForBingo = [];
+var nbForQuine = [];
 
 // Define sorted numbers
 var shuffledNumbers = shuffle(numbers.slice(0, 25));
@@ -31,8 +36,16 @@ function initialiseGame(){
 	cells.forEach(function(cell) {
 		cell.classList.remove('selected');
 	});
-	shuffle(numbers);
-	updateCard();
+	//shuffle(numbers);
+    if(gridModeElem.value == ""){
+        updateClassicCard();
+    }
+    else if(gridModeElem.value == "exponential"){
+	    updateExpCard();
+    }
+    else if(gridModeElem.value == "poisson"){
+        updatePoissonCard();
+    }
     pickedNumbers.length = 0;
 	pickedNumberElem.textContent = '';
 	pickedNumbersElem.textContent = '';
@@ -105,8 +118,6 @@ function playing(){
     pickingTime = Math.max(2000, Math.min(8000, pickingTime));
     //     console.log(Math.abs(Laplace(1000,4)));
 
-   
-
     if(hasBingo || stop || numbers.length === 0){
         displayPickedNumbers();
     }
@@ -125,6 +136,8 @@ stopButtonElem.addEventListener('click', function(){stop = true});
 
 
 
+
+
 // Shuffle function
 function shuffle(array) {
 	var shuffledNumbers = [];
@@ -138,14 +151,64 @@ function shuffle(array) {
     return shuffledNumbers;
 }
 
-// Update card function
-function updateCard() {
-	shuffledNumbers = shuffle(numbers.slice(0, 25));
+function sortNumbers(shuffledNumbers){
     const sortedNumbers = shuffledNumbers.sort((a, b) => a - b);
     for (var i = 0; i < cells.length; i++) {
         cells[i].textContent = sortedNumbers[i];
     }
 }
+
+// Update card function
+function updateClassicCard() {
+    shuffledNumbers = shuffle(numbers.slice(0, 25));
+    sortNumbers(shuffledNumbers);
+    
+}
+
+function updatePoissonCard() {
+    let gridNumbers = [];
+	while(gridNumbers.length < 25){
+        let number = Poisson(50);
+        if(!gridNumbers.includes(number) && numbers.includes(number)){
+            gridNumbers.push(number);
+        }
+    }
+    sortNumbers(gridNumbers);
+    
+}
+
+// function updateHypGeomCard() {
+// 	const N = 100; //numbers
+//     const K = 25; //grid length
+//     const n=25; //draws
+//     const x = 25; //number of successes
+
+//     let gridNumbers = [];
+//     //while(gridNumbers.length < 25){
+//         const number = hyperGeometric(x, N, K, n);
+//         console.log(number);
+//         if(!gridNumbers.includes(number) && numbers.includes(number)){
+//             gridNumbers.push(number);
+//         }  
+//     //}
+
+//     sortNumbers(gridNumbers);
+// }
+
+function updateExpCard() {
+	let gridNumbers = [];
+	while(gridNumbers.length < 25){
+        let number = exponentielle(2);
+        if(!gridNumbers.includes(number) && numbers.includes(number)){
+            gridNumbers.push(number);
+        }
+   }
+    sortNumbers(gridNumbers);
+}
+
+
+
+
 
 
 // Pick number function
@@ -161,8 +224,28 @@ function pickNumber() {
 	return number;
 }
 
+function binomialPickNumber(){
+    if (numbers.length === 0) {
+        alert("All numbers have been picked!");
+        return;
+    }
+
+    
+    var randomIndex = Math.floor(binomiale(100,0.5));
+	var number = numbers[randomIndex];
+	numbers.splice(randomIndex, 1);
+	return number;
+}
+
 function displayPickedNumber() {
-    const lastPickedNumber = pickNumber();
+    let lastPickedNumber = 0;
+
+    if(pickModeElem.value === ""){
+    lastPickedNumber = pickNumber();
+    }
+    else if(pickModeElem.value == "binomial"){
+      lastPickedNumber = binomialPickNumber();
+    }
     pickedNumbers.push(lastPickedNumber);
     bingoCells.forEach(cell => {
       if (cell.textContent == lastPickedNumber) {
@@ -184,11 +267,6 @@ function displayPickedNumbers() {
 }
   
 
-// const pickNumberBtn = document.getElementById("pick-number-btn");
-// pickNumberBtn.addEventListener("click", displayPickedNumber);
-// pickNumberBtn.addEventListener("click", displayPickedNumbers);
-
-
 
 function checkForBingo() {
 	var allCellsSelected = true;
@@ -203,8 +281,9 @@ function checkForBingo() {
       hasBingo = true;
 	  // Clear the selected numbers array
 	  selectedNumbers = [];
-      countNumberBingo.push(pickedNumbers.length);
-      nbForBingo.textContent = pickedNumbers.length;
+      nbForBingo.push(pickedNumbers.length);
+      localStorage.setItem("statBingo", nbForBingo);
+      nbForBingoElem.textContent = pickedNumbers.length;
 	}
   }
 
@@ -236,7 +315,9 @@ function checkForBingo() {
         if (selectedCount == 5) {
 			hasQuine = true;
             alert("Quine!");
-            nbForQuine.textContent = pickedNumbers.length;
+            nbForQuineElem.textContent = pickedNumbers.length;
+            nbForQuine.push(pickedNumbers.length);
+            localStorage.setItem("QuineStat", nbForQuine);
             return true;
         }
     }

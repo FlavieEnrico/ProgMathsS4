@@ -1,13 +1,43 @@
 
-function binomial(n, p){
-    const u = Math.random(0,n);
-    let s = math.cumsum(p);
+function binomialCoefficient (n, k){
+      
+    // Checking if n and k are integer
+    if(Number.isNaN(n) || Number.isNaN(k)){
+      return NaN;
+    }
+    
+    if(k < 0 || k > n){
+      return 0
+    }
+    
+    if(k === 0 || k === n){
+      return 1
+    }
+    
+    if(k === 1 || k === n - 1){
+      return n
+    }
+    
+    let res = n;
+    for(let i = 2; i <= k; i++){
+      res *= (n - i + 1) / i;
+    }
+    
+    return Math.round(res);
+  }
+
+
+function binomiale(n,p){    
+
+    let s = 0;
+    const r = Math.random(0,n);
+
     for(let i=0; i<n; i++){
-        if(u < s[i]){
-            return n;
+        s += binomialCoefficient(n,i)* Math.pow(p,i) * Math.pow((1-p), (n-i));
+        if(r < s){
+          return i;
         }
     }
-
     return -1;
 }
 
@@ -40,14 +70,20 @@ function factorial(n) {
     return result;
   }
 
-function Poisson(lambda, k){
+function Poisson(lambda){
 
-    let exp = Math.exp(-lambda);
-    let puiss = Math.pow(lambda, k);
+    let p = Math.random();
+    x=0;
+    y= Math.exp(-lambda);
+    z=y;
 
-    let facto = factorial(k);
+    while(z<p){
+        x+=1;
+        y=y*lambda/x;
+        z+=y;
+    }
 
-    return (exp * puiss)/ facto;
+    return x;
 
 }
 
@@ -60,20 +96,12 @@ function geometric(p){
     return count;
 }
 
-function hyperGeometric(N, K, n){
-    let count = 0;
+function hyperGeometric(x,N, K, n){
 
-    for(let i in n){
-
-        if(Math.random()< (K/N)){
-            count ++;
-            K --;
-        }
-
-        N --;
-    }
-
-    return count;
+    const num = binomialCoefficient(K, x) * binomialCoefficient(N-K, n-x);
+    const denom = binomialCoefficient(N,n);
+    return num/denom;
+    
 }
 
 function negativeBinomiale(k, p){
@@ -95,7 +123,9 @@ function negativeBinomiale(k, p){
 
 function exponentielle(lambda){
 
-    return -Math.log(Math.random())/ lambda;
+    const randomRes = -Math.log(Math.random())/ lambda;
+    const scaledRandom = randomRes * 9 + 1;
+    return Math.round(scaledRandom);
 }
 
 
