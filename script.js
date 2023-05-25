@@ -1,7 +1,7 @@
 // Define bingo numbers
 const numbers = Array.from({length: 100}, (_, i) => i + 1);
 const pickedNumbers = [];
-var orderedNumbers = [];
+var orderedNumbers = Array.from({length: 100}, (_, i) => i + 1);
 
 const bingoCells = document.querySelectorAll(".bingo-cell");
 const pickedNumberElem = document.getElementById("picked-number");
@@ -36,7 +36,7 @@ function initialiseGame(){
 	cells.forEach(function(cell) {
 		cell.classList.remove('selected');
 	});
-	//shuffle(numbers);
+	shuffle(numbers);
     if(gridModeElem.value == ""){
         updateClassicCard();
     }
@@ -232,8 +232,8 @@ function binomialPickNumber(){
 
     
     var randomIndex = Math.floor(binomiale(100,0.5));
-	var number = numbers[randomIndex];
-	numbers.splice(randomIndex, 1);
+	var number = orderedNumbers[randomIndex];
+	orderedNumbers.splice(randomIndex, 1);
 	return number;
 }
 
