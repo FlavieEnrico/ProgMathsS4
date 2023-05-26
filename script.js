@@ -123,7 +123,6 @@ function playing(){
     }
     else{
         setTimeout(function(){
-            console.log(pickingTime);
             displayPickedNumber();
             playing();
         }, pickingTime);
@@ -237,15 +236,50 @@ function binomialPickNumber(){
 	return number;
 }
 
+function negBinomialPickNumber(){
+    if (numbers.length === 0) {
+        alert("All numbers have been picked!");
+        return;
+    }
+
+    
+    var randomIndex = Math.floor(negativeBinomiale(50, 0.5));
+    console.log(randomIndex)
+	var number = orderedNumbers[randomIndex];
+	orderedNumbers.splice(randomIndex, 1);
+	return number;
+}
+
+function GeometricPickNumber(){
+    if (numbers.length === 0) {
+        alert("All numbers have been picked!");
+        return;
+    }
+
+    
+    var randomIndex = Math.floor(geometric(0.2));
+    console.log(randomIndex)
+	var number = orderedNumbers[randomIndex];
+	orderedNumbers.splice(randomIndex, 1);
+	return number;
+}
+
 function displayPickedNumber() {
     let lastPickedNumber = 0;
 
-    if(pickModeElem.value === ""){
-    lastPickedNumber = pickNumber();
-    }
-    else if(pickModeElem.value == "binomial"){
+    if(pickModeElem.value == "binomial"){
       lastPickedNumber = binomialPickNumber();
     }
+    else if(pickModeElem.value == "inv-binomial"){
+        lastPickedNumber = negBinomialPickNumber();
+    }
+    else if(pickModeElem.value == "geometric"){
+        lastPickedNumber = GeometricPickNumber();
+    }
+    else{
+        lastPickedNumber = pickNumber();
+    }
+
     pickedNumbers.push(lastPickedNumber);
     bingoCells.forEach(cell => {
       if (cell.textContent == lastPickedNumber) {
