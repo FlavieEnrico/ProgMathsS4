@@ -44,9 +44,8 @@
 	</div>
 	<select name="grid-mode" id="grid-mode">
 		<option value="">-- Choose your grid mode --</option>
-		<option value="exponential">Exponential Law</option>
+		<option value="laplace">Laplace Law</option>
 		<option value="poisson">Poisson Law</option>
-		<option value="Hypergeometric Law"></option>
 	</select>
 	<select name="pick-mode" id="pick-mode">
 		<option value="">-- Choose your pick mode --</option>
@@ -63,8 +62,10 @@
 	<p>Count of picked numbers for a quine : <span id="count-quine"></span></p>
 	<p>Count of picked numbers for a bingo : <span id="count-bingo"></span></p>
 	<canvas id="gridChart"></canvas>
-	<canvas id="pickedNumbersChart"></canvas>
-	<canvas id="chartForQuine"></canvas>
+	<canvas id="pickChart"></canvas>
+	<canvas id="timeBetweenChart"></canvas>
+	<canvas id="stayTimeChart"></canvas>
+	
 
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

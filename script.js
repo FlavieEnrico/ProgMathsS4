@@ -20,8 +20,8 @@ var automaticGameButton = document.querySelector('#automatic-game');
 //Statistics 
 let binomialResults = Array(100).fill(0);
 let LaplaceResuts = Array(100).fill(0);
-let normalResults = Array(100).fill(0);
-let exponentialResults = Array(100).fill(0);
+let normalResults = [];
+let exponentialResults = [];
 let poissonResults = Array(100).fill(0);
 let negBinomialResults = Array(100).fill(0);
 let geometricResults = Array(100).fill(0);
@@ -31,6 +31,7 @@ var selectedNumbers = [];
 var playing;
 var nbForBingo = [];
 var nbForQuine = [];
+var count = 0;
 
 // Define sorted numbers
 var shuffledNumbers = shuffle(numbers.slice(0, 25));
@@ -48,8 +49,8 @@ function initialiseGame(){
     if(gridModeElem.value == ""){
         updateClassicCard();
     }
-    else if(gridModeElem.value == "exponential"){
-	    updateExpCard();
+    else if(gridModeElem.value == "laplace"){
+	    updateLaplaceCard();
     }
     else if(gridModeElem.value == "poisson"){
         updatePoissonCard();
@@ -122,14 +123,21 @@ newGameButton.addEventListener('click', function(){
 
 function playing(){
 
-    let pickingTime = Laplace(5000, 1000);
-    LaplaceResuts.push(pickingTime);
+    // let pickingTime = Laplace(5000, 1000);
+    let pickingTime = exponentielle(0.002);
+    exponentialResults.push(pickingTime);
     pickingTime = Math.max(2000, Math.min(8000, pickingTime));
+
+  
     //     console.log(Math.abs(Laplace(1000,4)));
 
     if(hasBingo || stop || numbers.length === 0){
         displayPickedNumbers();
+        
         displayGridGraph();
+        displayPickTimeGraph();
+        displayPickingGraph();
+        displayStayingGraph();
     }
     else{
         setTimeout(function(){
@@ -187,34 +195,32 @@ function updatePoissonCard() {
     
 }
 
-// function updateHypGeomCard() {
-// 	const N = 100; //numbers
-//     const K = 25; //grid length
-//     const n=25; //draws
-//     const x = 25; //number of successes
 
-//     let gridNumbers = [];
-//     //while(gridNumbers.length < 25){
-//         const number = hyperGeometric(x, N, K, n);
-//         console.log(number);
-//         if(!gridNumbers.includes(number) && numbers.includes(number)){
-//             gridNumbers.push(number);
-//         }  
-//     //}
+function updateLaplaceCard() {
 
-//     sortNumbers(gridNumbers);
-// }
 
-function updateExpCard() {
-	let gridNumbers = [];
+    let gridNumbers = [];
+    let gridPackage = orderedNumbers;
 	while(gridNumbers.length < 25){
-        let number = exponentielle(2);
-        exponentialResults[number -1]++;
-        if(!gridNumbers.includes(number) && numbers.includes(number)){
-            gridNumbers.push(number);
+        let randomIndex = Math.floor(Laplace(5,12));
+        if(randomIndex <= 100){
+            LaplaceResuts[randomIndex-1]++;
         }
-   }
-    sortNumbers(gridNumbers);
+
+        if(randomIndex < gridPackage.length){
+            
+            let number = gridPackage[randomIndex];
+        
+            gridPackage.splice(randomIndex, 1);
+            gridNumbers.push(number)
+         
+        }
+
+    
+    }
+
+    sortNumbers(gridNumbers)
+	
 }
 
 
@@ -243,7 +249,7 @@ function binomialPickNumber(){
 
     
     let randomIndex = Math.floor(binomiale(100,0.5));
-    binomialResults.push(randomIndex);
+    binomialResults[randomIndex-1]++;
 	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
@@ -257,7 +263,7 @@ function negBinomialPickNumber(){
 
     
     let randomIndex = Math.floor(negativeBinomiale(50, 0.5));
-    negBinomialResults.push(randomIndex);
+    negBinomialResults[randomIndex-1]++;
 	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
@@ -271,7 +277,7 @@ function GeometricPickNumber(){
 
     
     let randomIndex = Math.floor(geometric(0.2));
-    geometricResults.push(randomIndex);
+    geometricResults[randomIndex-1]++;
 	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
@@ -292,6 +298,8 @@ function displayPickedNumber() {
     else{
         lastPickedNumber = pickNumber();
     }
+    count++;
+    console.log(count)
 
     pickedNumbers.push(lastPickedNumber);
     bingoCells.forEach(cell => {
