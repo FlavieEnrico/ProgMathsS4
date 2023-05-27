@@ -17,6 +17,14 @@ var cells = document.querySelectorAll('.bingo-cell');
 var newGameButton = document.querySelector('#new-game-btn');
 var automaticGameButton = document.querySelector('#automatic-game');
 
+//Statistics 
+let binomialResults = Array(100).fill(0);
+let LaplaceResuts = Array(100).fill(0);
+let normalResults = Array(100).fill(0);
+let exponentialResults = Array(100).fill(0);
+let poissonResults = Array(100).fill(0);
+let negBinomialResults = Array(100).fill(0);
+let geometricResults = Array(100).fill(0);
 
 
 var selectedNumbers = [];
@@ -115,11 +123,13 @@ newGameButton.addEventListener('click', function(){
 function playing(){
 
     let pickingTime = Laplace(5000, 1000);
+    LaplaceResuts.push(pickingTime);
     pickingTime = Math.max(2000, Math.min(8000, pickingTime));
     //     console.log(Math.abs(Laplace(1000,4)));
 
     if(hasBingo || stop || numbers.length === 0){
         displayPickedNumbers();
+        displayGridGraph();
     }
     else{
         setTimeout(function(){
@@ -168,6 +178,7 @@ function updatePoissonCard() {
     let gridNumbers = [];
 	while(gridNumbers.length < 25){
         let number = Poisson(50);
+        poissonResults[number-1]++;
         if(!gridNumbers.includes(number) && numbers.includes(number)){
             gridNumbers.push(number);
         }
@@ -198,6 +209,7 @@ function updateExpCard() {
 	let gridNumbers = [];
 	while(gridNumbers.length < 25){
         let number = exponentielle(2);
+        exponentialResults[number -1]++;
         if(!gridNumbers.includes(number) && numbers.includes(number)){
             gridNumbers.push(number);
         }
@@ -217,8 +229,8 @@ function pickNumber() {
         return;
     }
 
-	var randomIndex = Math.floor(Math.random() * numbers.length);
-	var number = numbers[randomIndex];
+	let randomIndex = Math.floor(Math.random() * numbers.length);
+	let number = numbers[randomIndex];
 	numbers.splice(randomIndex, 1);
 	return number;
 }
@@ -230,8 +242,9 @@ function binomialPickNumber(){
     }
 
     
-    var randomIndex = Math.floor(binomiale(100,0.5));
-	var number = orderedNumbers[randomIndex];
+    let randomIndex = Math.floor(binomiale(100,0.5));
+    binomialResults.push(randomIndex);
+	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
 }
@@ -243,9 +256,9 @@ function negBinomialPickNumber(){
     }
 
     
-    var randomIndex = Math.floor(negativeBinomiale(50, 0.5));
-    console.log(randomIndex)
-	var number = orderedNumbers[randomIndex];
+    let randomIndex = Math.floor(negativeBinomiale(50, 0.5));
+    negBinomialResults.push(randomIndex);
+	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
 }
@@ -257,9 +270,9 @@ function GeometricPickNumber(){
     }
 
     
-    var randomIndex = Math.floor(geometric(0.2));
-    console.log(randomIndex)
-	var number = orderedNumbers[randomIndex];
+    let randomIndex = Math.floor(geometric(0.2));
+    geometricResults.push(randomIndex);
+	let number = orderedNumbers[randomIndex];
 	orderedNumbers.splice(randomIndex, 1);
 	return number;
 }
@@ -288,6 +301,7 @@ function displayPickedNumber() {
     });
 
     let time = normalDistribution(1000, 500);
+    normalResults.push(time);
     //console.log(time);
     pickedNumberElem.textContent = lastPickedNumber;
     setTimeout(function(){
