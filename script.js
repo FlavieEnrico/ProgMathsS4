@@ -40,31 +40,30 @@ var hasQuine = false;
 var hasBingo = false;
 var stop = false;
 
-function initialiseGame(){
+function initialiseGame() {
     selectedNumbers = [];
-	cells.forEach(function(cell) {
-		cell.classList.remove('selected');
-	});
-	shuffle(numbers);
-    if(gridModeElem.value == ""){
+    cells.forEach(function (cell) {
+        cell.classList.remove('selected');
+    });
+    numbers.splice(0, numbers.length, ...shuffle(Array.from({ length: 100 }, (_, i) => i + 1)));
+    if (gridModeElem.value === "") {
         updateClassicCard();
-    }
-    else if(gridModeElem.value == "laplace"){
-	    updateLaplaceCard();
-    }
-    else if(gridModeElem.value == "poisson"){
+    } else if (gridModeElem.value === "laplace") {
+        updateLaplaceCard();
+    } else if (gridModeElem.value === "poisson") {
         updatePoissonCard();
     }
     pickedNumbers.length = 0;
-	pickedNumberElem.textContent = '';
-	pickedNumbersElem.textContent = '';
-	hasQuine = false;
+    pickedNumberElem.textContent = "";
+    pickedNumbersElem.textContent = "";
+    hasQuine = false;
     hasBingo = false;
     stop = false;
-	bingoCells.forEach(cell => {
-		cell.classList.remove("picked");
-	});
-};
+    bingoCells.forEach(cell => {
+        cell.classList.remove("picked");
+    });
+}
+
 
 
 // Add event listeners
@@ -116,10 +115,21 @@ automaticGameButton.addEventListener('click', function(){
 
 });
 
-newGameButton.addEventListener('click', function(){
-    initialiseGame();
-    playing();  
+newGameButton.addEventListener('click', function () {
+    if (!stop) {
+        stop = true; // Stop the game loop
+        setTimeout(function () {
+            initialiseGame();
+            playing();
+            stop = false;
+        }, 0);
+    } else {
+        initialiseGame();
+        playing();
+        stop = false;
+    }
 });
+
 
 function playing(){
 
@@ -131,20 +141,18 @@ function playing(){
   
     //     console.log(Math.abs(Laplace(1000,4)));
 
-    if(hasBingo || stop || numbers.length === 0){
+    if (hasBingo || stop || numbers.length === 0) {
+        // Game over or stop button clicked
         displayPickedNumbers();
-        
         displayGridGraph();
         displayPickTimeGraph();
         displayPickingGraph();
         displayStayingGraph();
-    }
-    else{
-        setTimeout(function(){
+    } else {
+        setTimeout(function () {
             displayPickedNumber();
             playing();
         }, pickingTime);
-        
     }
 
 }
@@ -179,7 +187,6 @@ function sortNumbers(shuffledNumbers){
 function updateClassicCard() {
     shuffledNumbers = shuffle(numbers.slice(0, 25));
     sortNumbers(shuffledNumbers);
-    
 }
 
 function updatePoissonCard() {
