@@ -191,11 +191,15 @@ function updateClassicCard() {
 
 function updatePoissonCard() {
     let gridNumbers = [];
+    let gridPackage = orderedNumbers;
 	while(gridNumbers.length < 25){
-        let number = Poisson(50);
-        poissonResults[number-1]++;
-        if(!gridNumbers.includes(number) && numbers.includes(number)){
-            gridNumbers.push(number);
+        let randomIndex = Poisson(50);
+        poissonResults[randomIndex-1]++;
+        console.log(randomIndex)
+
+        if(randomIndex < gridPackage.length){
+            gridNumbers.push(gridPackage[randomIndex]);
+            gridPackage.splice(randomIndex, 1);
         }
     }
     sortNumbers(gridNumbers);
@@ -222,8 +226,6 @@ function updateLaplaceCard() {
             gridNumbers.push(number)
          
         }
-
-    
     }
 
     sortNumbers(gridNumbers)
